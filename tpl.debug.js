@@ -35,7 +35,7 @@
         begin: '<%',
         end: '%>',
         _init: function(html) {
-            if(!html) return;
+            html = html || '';
             var me = this,
                 str = 'var ' + me.scope + '=this,__=\'\',echo=function(s){__+=s};',
                 blen = me.begin.length,
