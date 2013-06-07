@@ -37,12 +37,14 @@ Or use internal method `echo()`:
 
 3. Execution rendering:
 ``` js
-    tpl('#demo', {author: "Jony", languages: ["javascript", "php", "shell"]});
+    console.log( tpl('#demo', {author: "Jony", languages: ["javascript", "php", "shell"]}) );
 ```
 
 4. Result is:
+``` html
 <p>Hi, I'm Jony</p>
 <p>I can write: javascript, php, shell</p>
+```
 
 
 ## Browser Support
