@@ -46,6 +46,12 @@ Or use internal method `echo()`:
 <p>I can write: javascript, php, shell</p>
 ```
 
+## API
+##### `tpl(template, data)`
+##### `tpl(template).render(data)`
+`template` can be a html string or '#' plus an id,
+This will return a rendered html string.
+    
 
 ## Browser Support
 
