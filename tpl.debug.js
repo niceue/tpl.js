@@ -1,5 +1,5 @@
-/*! tpl.js (c) 2013 Jony Zhang <zj86@live.cn>, MIT Licensed
- */
+/*! tpl.js (c) 2013 Jony Zhang, //github.com/niceue/tpl.js */
+
 /* 类似于PHP的嵌入方式（其中的"$"代表传入的data对象）
    模板语法：
        嵌入传入的变量: <%=$.xxx%> , 注意，xxx变量不能为javascript关键字
@@ -61,9 +61,7 @@
 			me.compiler = new Function(str);
 		},
 		render: function(data) {
-            if (data && Object.prototype.toString.call(data) === '[object Object]') {
-                return this.compiler.call(data);
-            }
+            return this.compiler.call( data || {} );
 		}
 	};
 	return render;
