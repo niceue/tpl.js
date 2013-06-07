@@ -27,42 +27,42 @@
         var that = new Tpl(html);
         return data ? that.render(data) : that;
     }
-	function Tpl(html) {
-		this._init(html);
-	}
-	Tpl.prototype = {
+    function Tpl(html) {
+        this._init(html);
+    }
+    Tpl.prototype = {
         scope: '$',
         begin: '<%',
         end: '%>',
-		_init: function(html) {
+        _init: function(html) {
             if(!html) return;
-			var me = this,
+            var me = this,
                 str = 'var ' + me.scope + '=this,__=\'\',echo=function(s){__+=s};',
                 blen = me.begin.length,
-				elen = me.end.length,
-				b = html.indexOf(me.begin),
-				e,
-				tmp;
-			for(;b >= 0;) {
-				e = html.indexOf(me.end);
-				if(e < b) break; //出错后不再编译
-				str += '__+=\'' + ecp(html.substring(0, b)) + '\';';
-				tmp = trim(html.substring(b+blen, e));
-				if( tmp.indexOf('=') === 0 ) { //模板变量
+                elen = me.end.length,
+                b = html.indexOf(me.begin),
+                e,
+                tmp;
+            for(;b >= 0;) {
+                e = html.indexOf(me.end);
+                if(e < b) break; //出错后不再编译
+                str += '__+=\'' + ecp(html.substring(0, b)) + '\';';
+                tmp = trim(html.substring(b+blen, e));
+                if( tmp.indexOf('=') === 0 ) { //模板变量
                     str += '__+=' + tmp.substring(1) + ';';
-				} else { //js代码
-					str += tmp;
-				}
-				html = html.substring(e + elen);
-				b = html.indexOf(me.begin);
-			}
-			str += '__+=\'' + ecp(html) + '\';' + 'return __;';
-			str = str.replace(/\n/g, '');
-			me.compiler = new Function(str);
-		},
-		render: function(data) {
+                } else { //js代码
+                    str += tmp;
+                }
+                html = html.substring(e + elen);
+                b = html.indexOf(me.begin);
+            }
+            str += '__+=\'' + ecp(html) + '\';' + 'return __;';
+            str = str.replace(/\n/g, '');
+            me.compiler = new Function(str);
+        },
+        render: function(data) {
             return this.compiler.call( data || {} );
-		}
-	};
-	return render;
+        }
+    };
+    return render;
 }));
