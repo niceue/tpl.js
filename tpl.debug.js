@@ -1,20 +1,18 @@
-/*! tpl.js (c) 2013 Jony Zhang, //github.com/niceue/tpl.js */
+/*! tpl.js 0.1.0, github.com/niceue/tpl.js */
 
-/* 类似于PHP的嵌入方式（其中的"$"代表传入的data对象）
+/* 类似于PHP的嵌入方式, 可以嵌入js语句
    模板语法：
-       嵌入传入的变量: <%=$.xxx%> , 注意，xxx变量不能为javascript关键字
-       嵌入任意js语句：<% if($.xxx){ %> foo <%}else{%> bar <%}%>
+       嵌入传入的变量: <%=xxx%> , 注意，xxx变量不能为javascript关键字
+       嵌入任意js语句：<% if(xxx){ %> foo <%}else{%> bar <%}%>
    调用：
        var html = tpl('#tpl_id', data);
        console.log(html);
  */
 (function (root, factory) {
-    //RequireJS, OzJS, curl, SeaJS
-    if ( typeof define === 'function' && define.amd || root.seajs ) {
-        define(factory);
-    } else {
-        factory();
-    }
+    //AMD and CMD (RequireJS, OzJS, curl, SeaJS ...)
+    typeof define === 'function' && define(factory);
+    //Node.js and Browser global
+    (typeof exports !== 'undefined' ? exports : root).tpl = factory();
 }(this, function () {
     function trim(str) {
         return str.trim ? str.trim() : str.replace(/^\s*|\s*$/g, '');
@@ -31,19 +29,18 @@
         this._init(html);
     }
     Tpl.prototype = {
-        scope: '$',
         begin: '<%',
         end: '%>',
         _init: function(html) {
             html = html || '';
             var me = this,
-                str = 'var ' + me.scope + '=this,__=\'\',echo=function(s){__+=s};',
+                str = 'var __=\'\',echo=function(s){__+=s};with(this){',
                 blen = me.begin.length,
                 elen = me.end.length,
                 b = html.indexOf(me.begin),
                 e,
                 tmp;
-            for(;b >= 0;) {
+            while(b != -1) {
                 e = html.indexOf(me.end);
                 if(e < b) break; //出错后不再编译
                 str += '__+=\'' + ecp(html.substring(0, b)) + '\';';
@@ -56,8 +53,8 @@
                 html = html.substring(e + elen);
                 b = html.indexOf(me.begin);
             }
-            str += '__+=\'' + ecp(html) + '\';' + 'return __;';
-            str = str.replace(/\n/g, '');
+            str += '__+=\'' + ecp(html) + '\'}' + 'return __';
+            str = str.replace(/\r|\n/g, '');
             me.compiler = new Function(str);
         },
         render: function(data) {
