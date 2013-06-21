@@ -1,4 +1,4 @@
-/*! tpl.js 0.1.0, github.com/niceue/tpl.js */
+/*! tpl.js 0.1.1, github.com/niceue/tpl.js */
 
 /* 类似于PHP的嵌入方式, 可以嵌入js语句
    模板语法：
@@ -46,7 +46,8 @@
                 str += '__+=\'' + ecp(html.substring(0, b)) + '\';';
                 tmp = trim(html.substring(b+blen, e));
                 if( tmp.indexOf('=') === 0 ) { //模板变量
-                    str += '__+=' + tmp.substring(1) + ';';
+                    tmp = tmp.substring(1);
+                    str += '__+=typeof ' + tmp + '!==\'undefined\'?('+ tmp +'):\'\';';
                 } else { //js代码
                     str += tmp;
                 }
