@@ -1,4 +1,4 @@
-/*! tpl.js 0.1.1, github.com/niceue/tpl.js */
+/*! tpl.js 0.2.0, github.com/niceue/tpl.js */
 
 /* 类似于PHP的嵌入方式, 可以嵌入js语句
    模板语法：
@@ -14,53 +14,45 @@
     //Node.js and Browser global
     (typeof exports !== 'undefined' ? exports : root).tpl = factory();
 }(this, function () {
-    function trim(str) {
-        return str.trim ? str.trim() : str.replace(/^\s*|\s*$/g, '');
-    }
-    function ecp(str){
-        return str.replace(/('|\\)/g, '\\$1');
-    }
-    function render(html, data) {
-        if (html.charAt(0) === '#' && html.indexOf('<') === -1) html = document.getElementById(html.substring(1)).innerHTML;
-        var that = new Tpl(html);
-        return data ? that.render(data) : that;
-    }
-    function Tpl(html) {
-        this._init(html);
-    }
-    Tpl.prototype = {
-        begin: '<%',
-        end: '%>',
-        _init: function(html) {
-            html = html || '';
-            var me = this,
-                str = 'var __=\'\',echo=function(s){__+=s};with(this){',
-                blen = me.begin.length,
-                elen = me.end.length,
-                b = html.indexOf(me.begin),
-                e,
-                tmp;
+
+    function Compiler(html) {
+        html = html || '';
+        if (/^#\w+$/.test(html)) html = document.getElementById(html.substring(1)).innerHTML;
+        var begin = '<%',
+            end = '%>',
+            trim = function(str) {
+                return str.trim ? str.trim() : str.replace(/^\s*|\s*$/g, '');
+            },
+            ecp = function(str){
+                return str.replace(/('|\\)/g, '\\$1');
+            },
+            str = "var __='',echo=function(s){__+=s};with(_$||{}){",
+            blen = begin.length,
+            elen = end.length,
+            b = html.indexOf(begin),
+            e,
+            tmp;
             while(b != -1) {
-                e = html.indexOf(me.end);
+                e = html.indexOf(end);
                 if(e < b) break; //出错后不再编译
-                str += '__+=\'' + ecp(html.substring(0, b)) + '\';';
+                str += "__+='" + ecp(html.substring(0, b)) + "';";
                 tmp = trim(html.substring(b+blen, e));
                 if( tmp.indexOf('=') === 0 ) { //模板变量
                     tmp = tmp.substring(1);
-                    str += '__+=typeof ' + tmp + '!==\'undefined\'?('+ tmp +'):\'\';';
+                    str += "typeof(" + tmp + ")!='undefined'&&(__+=" + tmp + ");";
                 } else { //js代码
                     str += tmp;
                 }
                 html = html.substring(e + elen);
-                b = html.indexOf(me.begin);
+                b = html.indexOf(begin);
             }
-            str += '__+=\'' + ecp(html) + '\'}' + 'return __';
+            str += "__+='" + ecp(html) + "'}return __";
             str = str.replace(/\r|\n/g, '');
-            me.compiler = new Function(str);
-        },
-        render: function(data) {
-            return this.compiler.call( data || {} );
-        }
+            this.render = new Function("_$", str);
+    }
+
+    return function(html, data) {
+        var me = new Compiler(html);
+        return data ? me.render(data) : me;
     };
-    return render;
 }));
