@@ -16,13 +16,13 @@ function Compiler(html) {
         tmp;
         while(b != -1) {
             e = html.indexOf(end);
-            if(e < b) break; //³ö´íºó²»ÔÙ±àÒë
+            if(e < b) break; //å‡ºé”™åŽä¸å†ç¼–è¯‘
             str += "__+='" + ecp(html.substring(0, b)) + "';";
             tmp = html.substring(b+blen, e).trim();
-            if( tmp.indexOf('=') === 0 ) { //Ä£°å±äÁ¿
+            if( tmp.indexOf('=') === 0 ) { //æ¨¡æ¿å˜é‡
                 tmp = tmp.substring(1);
                 str += "typeof(" + tmp + ")!='undefined'&&(__+=" + tmp + ");";
-            } else { //js´úÂë
+            } else { //jsä»£ç 
                 str += tmp;
             }
             html = html.substring(e + elen);
