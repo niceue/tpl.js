@@ -1,7 +1,7 @@
 ## tpl.js
 Lightweight javascript template engine. Adaptation AMD, CMD and global environment
 
-[Speed Test](http://jsperf.com/dom-vs-innerhtml-based-templating/777)
+[Speed Test](http://jsperf.com/dom-vs-innerhtml-based-templating/780)
 
 
 ## Usage
