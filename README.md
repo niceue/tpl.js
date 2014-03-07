@@ -50,10 +50,10 @@ Or use internal method `echo()`:
 ```
 
 ## API
-##### `tpl(template, data)`
-##### `tpl(template).render(data)`
-`template` can be a html string or '#' plus an id,
-This will return a rendered html string.
+##### Get HTML: `tpl(template, data)`
+##### Get HTML: `tpl(template)(data)`
+##### Precompiled: `tpl(template)`
+`template` can be a html template string or '#' plus an id, This will return a rendered html string.
     
 
 ## Browser Support
