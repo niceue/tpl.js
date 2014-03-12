@@ -20,42 +20,52 @@
 &lt;div id="view"&gt;&lt;/div&gt;
 
 &lt;script type="text/template" id="demo"&gt;
-    &lt;p&gt;Hi, I'm &lt;%=author%&gt;&lt;%=anything%&gt;&lt;/p&gt;
+    &lt;p&gt;Hi, I'm &lt;#=author#&gt;&lt;#=undefinedVariable#&gt;&lt;/p&gt;
+    &lt;#include('#tpl_job');#&gt;
     &lt;p&gt;I can write:
-    &lt;% 
+    &lt;# 
         for(var i=0; i&lt;languages.length; i++) { 
             echo( (i===0?"":", ") + languages[i] );
         }
-    %&gt;
+    #&gt;
     &lt;/p&gt;
+&lt;/script&gt;
+</pre>
+<pre>
+&lt;script type="text/template" id="tpl_job"&gt;
+    &lt;p&gt;I am a &lt;#=job#&gt;&lt;/p&gt;
 &lt;/script&gt;
 </pre>
 <br><br>
 
 <h3>Javascript</h3>
 <pre>
-document.getElementById('view').innerHTML = tpl('#demo', {author: "Jony", languages: ["javascript", "php", "shell"]});
+document.getElementById('view').innerHTML = tpl('#demo', {author: "Jony", job: "Frontend Web Developer", languages: ["javascript", "php", "shell"]});
 </pre>
 
 <br><br>
 <h3>Result as below</h3>
 <div id="view"></div>
 <script type="text/template" id="demo">
-    <p>Hi, I'm <%=author%><%=anything%></p>
+    <p>Hi, I'm <#=author#><#=undefinedVariable#></p>
+    <#include('#tpl_job');#>
     <p>I can write:
-    <% 
+    <# 
         for(var i=0; i<languages.length; i++) { 
             echo( (i===0?"":", ") + languages[i] );
         }
-    %>
+    #>
     </p>
 </script>
+<script type="text/template" id="tpl_job">
+    <p>I am a <#=job#></p>
+</script>
 
-
+<a href="https://github.com/niceue/tpl.js" style="position:absolute;top:0;right:0;"><img src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
 <script type="text/javascript" src="tpl.js"></script>
 <script>
-    document.getElementById('view').innerHTML = tpl('#demo', {author: "Jony", languages: ["javascript", "php", "shell"]});
+    document.getElementById('view').innerHTML = tpl('#demo', {author: "Jony", job: "Frontend Web Developer", languages: ["javascript", "php", "shell"]});
 </script>
 </body>
 </html>

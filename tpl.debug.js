@@ -10,25 +10,29 @@
 
         其中，如果template变量传入#id，会自动获取innerHTML
  */
-(function (root, factory) {
-    //AMD and CMD (RequireJS, OzJS, curl, SeaJS ...)
-    typeof define === 'function' && define(factory);
-    //Node.js and Browser global
-    (typeof exports !== 'undefined' ? exports : root).tpl = factory();
-}(this, function () {
+(function (window) {
 
-    function Compiler(html) {
+    function tpl(html, data) {
+        var fn = compiler(html);
+        return data ? fn(data) : fn;
+    }
+    tpl.begin = '<#';
+    tpl.end = '#>';
+
+    function compiler(html) {
         html = html || '';
         if (/^#\w+$/.test(html)) html = document.getElementById(html.substring(1)).innerHTML;
-        var begin = '<#',
-            end = '#>',
+        var begin = tpl.begin,
+            end = tpl.end,
+            v = tpl.variable,
+            arg1 = v || "$",
             trim = function(str) {
                 return str.trim ? str.trim() : str.replace(/^\s*|\s*$/g, '');
             },
             ecp = function(str){
                 return str.replace(/('|\\|\r?\n)/g, '\\$1');
             },
-            str = "var __='',echo=function(s){__+=s};with(_$||{}){",
+            str = "var "+ arg1 +"="+ arg1 +"||this,__='',echo=function(s){__+=s},include=function(t,d){__+=tpl(t).call(d||"+ arg1 +")};"+ (v?"":"with($||{}){"),
             blen = begin.length,
             elen = end.length,
             b = html.indexOf(begin),
@@ -42,19 +46,19 @@
             tmp = trim(html.substring(b+blen, e));
             if( tmp.indexOf('=') === 0 ) { //模板变量
                 tmp = tmp.substring(1);
-                str += "typeof(" + tmp + ")!=='undefined'&&(__+=" + tmp + ");";
+                str += "typeof (" + tmp + ")!=='undefined'&&(__+=" + tmp + ");";
             } else { //js代码
-                str += tmp;
+                str += tmp + ";";
             }
             html = html.substring(e + elen);
             b = html.indexOf(begin);
         }
-        str += "__+='" + ecp(html) + "'}return __";
-        this.render = new Function("_$", str);
+        str += "__+='" + ecp(html) + "'"+ (v?";":"}") +"return __";
+        return new Function(arg1, str);
     }
 
-    return function(html, data) {
-        var me = new Compiler(html);
-        return data ? me.render(data) : me.render;
-    };
-}));
+    //Browser global
+    window.tpl = tpl;
+    //AMD and CMD (RequireJS, OzJS, curl, SeaJS ...)
+    typeof define === 'function' && define('tpl',[],function(){return tpl});
+})(window);
