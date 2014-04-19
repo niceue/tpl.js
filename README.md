@@ -16,23 +16,23 @@ Or in sea.js, you can include by: `var tpl = require('path/to/tpl');`
 2. Template in your html:
 ``` html
     <script type="text/template" id="demo">
-        <p>Hi, I'm <%=author%></p>
+        <p>Hi, I'm <#=author#></p>
         <p>I can write:
-        <% for(var i=0; i<languages.length; i++) { %>
-        <%=(i===0?"":",")+languages[i]%>
-        <%}%>
+        <# for(var i=0; i<languages.length; i++) { #>
+        <#=(i===0?"":",")+languages[i]#>
+        <#}#>
         </p>
     </script>
 ```
 Or use internal method `echo()`:
 ``` html
     <script type="text/template" id="demo">
-        <p>Hi, I'm <%=author%></p>
+        <p>Hi, I'm <#=author#></p>
         <p>I can write:
-        <% 
+        <# 
         for(var i=0; i<languages.length; i++) { 
             echo( (i===0?"":", ") + languages[i] );
-        }%>
+        }#>
         </p>
     </script>
 ```
@@ -50,6 +50,7 @@ Or use internal method `echo()`:
 ```
 
 ## API
+##### Include another template: `<# include("#tpl_id") #>`
 ##### Get HTML: `tpl(template, data)`
 ##### Get HTML: `tpl(template)(data)`
 ##### Precompiled: `tpl(template)`
