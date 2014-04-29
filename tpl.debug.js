@@ -37,23 +37,36 @@
             elen = end.length,
             b = html.indexOf(begin),
             e,
+            skip,
             tmp;
             
         while(b != -1) {
-            e = html.indexOf(end);
+            e = skip ? b + blen : html.indexOf(end);
             if(e < b) break; //出错后不再编译
+
             str += "__+='" + ecp(html.substring(0, b)) + "';";
-            tmp = trim(html.substring(b+blen, e));
-            if( tmp.indexOf('=') === 0 ) { //模板变量
-                tmp = tmp.substring(1);
-                str += "typeof (" + tmp + ")!=='undefined'&&(__+=" + tmp + ");";
-            } else { //js代码
-                str += tmp + ";";
+
+            if (skip) {
+                html = html.substring(blen+elen+1);
+                skip--;
+            } else {
+                tmp = trim(html.substring(b+blen, e));
+                if ('#'===tmp) {
+                    skip = 1;
+                }
+                else if( tmp.indexOf('=') === 0 ) { //模板变量
+                    tmp = tmp.substring(1);
+                    str += "typeof (" + tmp + ")!=='undefined'&&(__+=" + tmp + ");";
+                } else { //js代码
+                    str += tmp + ";";
+                }
             }
+
             html = html.substring(e + elen);
-            b = html.indexOf(begin);
+            b = html.indexOf( begin + (skip ? '#'+end : '') );
         }
         str += "__+='" + ecp(html) + "'"+ (v?";":"}") +"return __";
+        console.log(str)
         return new Function(arg1, str);
     }
 
